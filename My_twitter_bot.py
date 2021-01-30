@@ -13,5 +13,24 @@ api = tweepy.API(auth)
 
 mentions = api.mentions_timeline()
 
-for mention in mentions:
-	print('mention.id' + 'mention.full_text')
+FILE_NAME = 'last_seen_id.txt'
+
+def retrieve_last_seen_id(file_name):
+	f_read = open(file_name, 'r')
+
+	try:
+		last_seen_id = int(f_read.read().strip())
+		f_read.close()
+		return last_seen_id
+	except:
+		f_read.close()
+		return None
+
+def store_last_seen_id(last_seen_id, file_name):
+	f_write = open(file_name, 'w')
+	f_write.write(str(last_seen_id))
+	f_write.close()
+	return
+
+last_seen_id = retrieve_last_seen_id(FILE_NAME)
+store_last_seen_id(last_seen_id+111, FILE_NAME)
