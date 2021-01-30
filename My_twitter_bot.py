@@ -1,4 +1,5 @@
 import tweepy
+import time
 
 print("This is my automatically replying Twitter robot")
 
@@ -45,7 +46,17 @@ def automatic_reply():
 		last_seen_id = mention.id
 		store_last_seen_id(last_seen_id, FILE_NAME)
 
-		api.update_status('@' + mention.user.screen_name + ' This is for universal replying', mention.id)
+		#api.update_status('@' + mention.user.screen_name + ' This is for universal replying', mention.id)
+
+		if '?' in mention.full_text.lower():
+			print("Found ?")
+			print("responding back...")
+			api.update_status('@' + mention.user.screen_name + ' Sorry I am currently busy, will get back to you soon', mention.id)
+		elif 'dinner' in mention.full_text.lower() or 'lunch' in mention.full_text.lower():
+			print("Found Food")
+			print("responding back...")
+			api.update_status('@' + mention.user.screen_name + ' Food? Lets GO!', mention.id)
 
 while True:
 	automatic_reply()
+	time.sleep(10)
