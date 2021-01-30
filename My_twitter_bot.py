@@ -11,7 +11,6 @@ auth = tweepy.OAuthHandler(API_KEY, API_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-mentions = api.mentions_timeline()
 
 FILE_NAME = 'last_seen_id.txt'
 
@@ -32,5 +31,21 @@ def store_last_seen_id(last_seen_id, file_name):
 	f_write.close()
 	return
 
-last_seen_id = retrieve_last_seen_id(FILE_NAME)
-store_last_seen_id(last_seen_id+111, FILE_NAME)
+def automatic_reply():
+	last_seen_id = retrieve_last_seen_id(FILE_NAME)
+
+	if last_seen_id is not None:
+		mentions = api.mentions_timeline(last_seen_id, tweet_mode='extended')
+	else:
+		mentions = api.mentions_timeline()
+
+	for mention in reversed(mentions):
+		print('New Messages: ' + str(mention.id) + " ---> " + mention.full_text)
+
+		last_seen_id = mention.id
+		store_last_seen_id(last_seen_id, FILE_NAME)
+
+		api.update_status('@' + mention.user.screen_name + ' This is for universal replying', mention.id)
+
+while True:
+	automatic_reply()
